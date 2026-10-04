@@ -218,5 +218,5 @@ The application architecture has been decoupled via service layers (`AlertServic
 - **Application Number:** 24
 - **Problem Statement:** 74
 - **Project Title:** DISASTERALERT
-- **Lead Developer & Architect:** Sanchita Sharma (B.Tech Computer Engineering)
+- **Lead Developer & Architect:** Sanchita Suryawanshi (B.Tech Computer Engineering)
 - **Supervising Faculty:** Department of Computer Engineering
