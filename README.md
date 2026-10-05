@@ -37,7 +37,7 @@ During civil catastrophes—such as earthquakes, monsoonal flash floods, cycloni
    - Proximity sorting using the Haversine distance formula from Kharghar center.
    - Live capacity tracking (total capacity, active occupancy, remaining beds).
    - Facility checklist: Potable Drinking Water, Emergency Medical Clinic, Diesel Power Backups, Cooked Meals, and Childcare.
-   - 1-tap Google Maps turn-by-turn navigation route launcher.
+   - 1-tap Google Maps turn-by-turn navigation route launcher with offline GPS fallback.
 
 5. **🩹 Offline-First Emergency Medical First-Aid Guides**
    - 10 comprehensive protocols: Severe Bleeding, Burns & Scalds, Fractures, Adult Hands-Only CPR, Fainting/Syncope, Venomous Snake Bite, High-Voltage Electric Shock, Heat Stroke, Choking (Heimlich Maneuver), and Severe Dehydration.
@@ -46,6 +46,51 @@ During civil catastrophes—such as earthquakes, monsoonal flash floods, cycloni
 6. **🔔 Push Notification Center & Profile Preferences**
    - Categorized notifications for alerts, shelter capacity changes, and safety checks.
    - Individual preference toggles for high-decibel emergency alarms, haptic SOS vibration, geo-tracking telemetry, and push broadcasts.
+
+---
+
+## 📸 Application Screenshots & UI Showcase
+
+<div align="center">
+
+| 1. Emergency HUD & Command Center | 2. Live Disaster Alert Feed | 3. Radar-Assisted Shelter Locator |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/01_dashboard_home.png" width="250" alt="Emergency HUD Dashboard" /> | <img src="docs/screenshots/02_alert_feed.png" width="250" alt="Disaster Alert Feed" /> | <img src="docs/screenshots/03_emergency_shelters.png" width="250" alt="Emergency Shelters Radar" /> |
+| **Tactical HUD & Safety Grid**<br>Live threat triage, 1-tap SOS, regional micro-climate grid, and instant status check-in. | **Multi-Hazard Alert Feed**<br>Early warning alerts categorized by severity (`CRITICAL`, `HIGH`, `MEDIUM`) with search & filters. | **Tactical Radar Sweep Map**<br>Real-time shelter capacity tracking, amenities checklist, and 1-tap turn-by-turn map directions. |
+
+<br>
+
+| 4. Offline First-Aid Protocol Guides | 5. Tactical Settings & Crisis Utilities |
+| :---: | :---: |
+| <img src="docs/screenshots/04_first_aid_guides.png" width="250" alt="First-Aid Protocol Guides" /> | <img src="docs/screenshots/05_profile_settings.png" width="250" alt="Profile and Tactical Tools" /> |
+| **Emergency Medical Protocols**<br>10 offline trauma guides with step-by-step instructions, warnings, and direct 108 dialer. | **Crisis Toolkit & Tactical HUD**<br>Evacuation Go-Bag checklist, optical/audible rescue beacon, incident reporting, and audio alarms. |
+
+</div>
+
+---
+
+## 🗺️ How Shelter Selection & Turn-by-Turn Map Direction Works
+
+When a citizen is facing an active crisis (e.g. rising floodwaters or an earthquake tremor) and taps **"Directions"** on a relief shelter, the app executes the following precision workflow:
+
+```
+[User Views Radar / List] 
+           ↓
+[Taps Shelter Pin / Card] ───→ Selected Shelter Model (Name, Lat, Long, Capacity)
+           ↓
+[Taps "Directions" Button] 
+           ↓
+[Helpers.openMapDirections(context, lat, long, name)]
+           ├── 1. Constructs Universal Google Maps URL:
+           │      https://www.google.com/maps/dir/?api=1&destination={lat},{long}&destination_place_id={name}
+           ├── 2. url_launcher.canLaunchUrl() checks OS URL scheme support
+           ├── 3. url_launcher.launchUrl(..., mode: LaunchMode.externalApplication):
+           │      • Android: Dispatches ACTION_VIEW Intent directly to native Google Maps app
+           │      • iOS: Launches Google Maps app or native Apple Maps turn-by-turn navigation
+           └── 4. Graceful Offline Fallback:
+                  If device has no map app/network, displays high-contrast modal with 
+                  precise GPS coordinates and local routing vectors from Kharghar telemetry.
+```
 
 ---
 
@@ -136,6 +181,7 @@ lib/
 | **Typography** | Google Fonts (`^6.2.1`) | Clean, legible *Inter* sans-serif typeface |
 | **Persistence** | SharedPreferences (`^2.5.5`) | Local encrypted caching for user profile & contacts |
 | **Hardware Hooks** | url_launcher (`^6.3.2`) | Native phone dialer, SMS app, and Google Maps |
+| **Audio Engine** | audioplayers (`^6.1.1`) | Real looping emergency distress siren & haptic sync |
 | **Formatting** | intl (`^0.20.3`) | Dates, timestamps, and regional numbering |
 
 ---
@@ -157,7 +203,7 @@ flutter pub get
 flutter analyze
 flutter test
 ```
-*(Both commands pass with 0 errors and 18 passing tests!)*
+*(Both commands pass with 0 errors and 31 passing tests!)*
 
 ### 3. Run the Application
 To run on your connected device (macOS Desktop or Chrome):
